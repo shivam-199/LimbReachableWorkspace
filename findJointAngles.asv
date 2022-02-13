@@ -1,0 +1,84 @@
+function [Q11, Q12, Q21, Q22] = findJointAngles(point,L1, L2)
+%FINDJOINTANGLES This fuunction uses inverse kinematics to compute the
+%joint angles Q1 and Q2.
+%   We are using the algebraic method to compute inverse kinematics to find
+%   Q1 and Q2. When doing inverse kinematics to compute Q2 we get 2 values, 
+%   since cos has two positive values (in 1st and 4th quadrant).
+%   The function takes inputs:
+%       Point position P(x, y).
+%       Link lengths L1 and L2.
+%   It's output:
+%       Q11, Q12, Q21, Q22
+
+r = point(1) ^ 2 + point(1) ^ 2;
+D = (r - L1 ^ 2 - L2 ^ 2) / (2 * L1 * L2);
+
+Q21_rad = atan2(sqrt(1 - D ^ 2), D);
+Q21 = rad2deg(Q21_rad);
+
+Q22_rad = atan2(-sqrt(1 - D ^ 2), D);
+Q22 = rad2deg(Q22_rad);
+
+Q11_rad = atan2(point(2), point(1)) - atan2(L1 + L2 * cos(Q21), L2 * sin(Q21));
+Q12 = atan2(point(2), point(1)) - atan2(L1 + L2 * cos(Q21), L2 * sin(Q21));
+
+Q21 = acosd(((point(1) ^ 2) + (point(2) ^ 2) - (L1 ^ 2) - (L2 ^ 2)) / (2 * L1 * L2));
+Q22 = - Q21;
+Q11 = acosd((point(1) * (L1 + L2 * cosd(Q21)) + point(2) * L2 * sind(Q21)) / ((L1 ^ 2) + (L2 ^ 2) + (2 * L1 * L2 * cosd(Q21))));
+Q12 = acosd((point(1) * (L1 + L2 * cosd(Q22)) + point(2) * L2 * sind(Q22)) / ((L1 ^ 2) + (L2 ^ 2) + (2 * L1 * L2 * cosd(Q22))));
+%
+%
+
+%{
+    
+% Define the link lengths, joint angles and end-effector locations of the robots as symbolic variables.
+syms L_1 L_2 theta_1 theta_2 XE YE
+
+% Specify values for the link lengths of the robot.
+L_1 = L1;
+L_2 = L2;
+
+% Define the X and Y coordinates of the end-effector as a function of the joint angles (θ1 ,θ2).
+XE_RHS = L_1*cos(theta_1) + L_2*cos(theta_1+theta_2);
+YE_RHS = L_1*sin(theta_1) + L_2*sin(theta_1+theta_2);
+
+% Convert the symbolic expressions into MATLAB functions.
+% XE_MLF = matlabFunction(XE_RHS,'Vars',[L_1 L_2 theta_1 theta_2]);
+% YE_MLF = matlabFunction(YE_RHS,'Vars',[L_1 L_2 theta_1 theta_2]);
+
+% Define the forward kinematics equations.
+XE_EQ = XE == XE_RHS;
+YE_EQ = YE == YE_RHS;
+
+% Solve for θ1 and θ2. 
+% Struct with fields:
+%   theta_1: [2x1 sym]
+%   theta_2: [2x1 sym]
+S = solve([XE_EQ YE_EQ], [theta_1 theta_2]);
+simplify(S.theta_1);
+simplify(S.theta_2);
+
+% Convert the solutions into MATLAB functions that you can use later. 
+% The functions TH1_MLF and TH2_MLF represent the inverse kinematics.
+TH1_MLF{1} = matlabFunction(S.theta_1(1),'Vars',[L_1 L_2 XE YE]);
+TH1_MLF{2} = matlabFunction(S.theta_1(2),'Vars',[L_1 L_2 XE YE]);
+TH2_MLF{1} = matlabFunction(S.theta_2(1),'Vars',[L_1 L_2 XE YE]);
+TH2_MLF{2} = matlabFunction(S.theta_2(2),'Vars',[L_1 L_2 XE YE]);
+
+% Calculate the angles θ1 and θ2 using the MATLAB functions TH1_MLF{1} and TH2_MLF{1}, respectively.
+xmat = point(1);
+ymat = point(2);
+tmp_th11_mat = TH1_MLF{1}(L1,L2,xmat,ymat);
+tmp_th12_mat = TH1_MLF{2}(L1,L2,xmat,ymat);
+tmp_th21_mat = TH2_MLF{1}(L1,L2,xmat,ymat);
+tmp_th22_mat = TH2_MLF{2}(L1,L2,xmat,ymat);
+
+% Convert the angle units from radians to degrees.
+Q11 = rad2deg(tmp_th11_mat);
+Q12 = rad2deg(tmp_th12_mat);
+Q21 = rad2deg(tmp_th21_mat);
+Q22 = rad2deg(tmp_th22_mat);
+
+%}
+end
+

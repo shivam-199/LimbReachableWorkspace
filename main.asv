@@ -45,7 +45,7 @@ title("Workspace of Two Link SCM")
 
 % This point is chosen manually for testing, points inside the circle will
 % be chosed using a formula and will be iterated.
-point = [-1, -1];
+point = [1, 1];
 plot(point(1), point(2), "ro")
 
 %% 2. Find corresponding configurations of q, through inverse kinematics.
