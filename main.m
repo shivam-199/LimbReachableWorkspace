@@ -1,4 +1,12 @@
-%Steps to compute the workspace:
+
+%%
+% Topic: Limb Reachable Workspace of a 2 Link Serial Chain Manipulator
+% Author: Shivam Chaudhary
+%         Indian Institute of Technology Gandhinagar
+%         shivamchaudhary@iitgn.ac.in
+% Date: 12 Feb 2022
+
+%% Steps to compute the workspace:
 %	1. Pick a point P(x, y) in the task space.
 %	2. Find corresponding configuration q, through inverse kinematics.
 %	3. Find structure matrix, A(q)
@@ -15,9 +23,13 @@ L1 = 1;
 L2 = 1;
 CENTER = [0, 0];
 RADIUS = 2;
-NUMBER_OF_CABLES = 3;    % For 2 redundancy or 3 for 1 redundancy.
-M = [-1.5 0; 0.5, 0; 1.5 0];
-
+NUMBER_OF_CABLES = 4;    % For 2 redundancy using 4 cables or 3 cables for 1 redundancy.
+if NUMBER_OF_CABLES == 3
+    M = [-1.5 0; 0.5, 0; 1.5 0];
+end
+if NUMBER_OF_CABLES == 4
+    M = [-1.5 0; -0.5, 0; 0.5, 0; 1.5 0];
+end
 %% Initialising the graph
 % Clear the axes.
 cla
@@ -38,10 +50,16 @@ axis square
 grid on
 
 % Set a title.
-title("Workspace of Two Link SCM 3 Redundancy")
+if NUMBER_OF_CABLES == 3
+    title("Workspace of Two Link SCM - 1 Redundancy")
+end
 
-for x=-2:0.1:2
-    for y=-2:0.1:2
+if NUMBER_OF_CABLES == 4
+    title("Workspace of Two Link SCM - 2 Redundancy")
+end
+
+for x=-2:0.01:2
+    for y=-2:0.01:2
         if x^2 + y^2 > RADIUS^2
             continue
         end
@@ -60,7 +78,13 @@ for x=-2:0.1:2
 
         %% 3. Find Structure Matrix
         %    The structure matrix will be 2 * 3 (or 4) (num of joints * num of cables)
-        A = structureMatrix(NUMBER_OF_CABLES, M, L1, L2, Q11, Q21);
+
+        if NUMBER_OF_CABLES == 3
+            A = structureMatrix(M, L1, L2, Q11, Q21);
+        end
+        if NUMBER_OF_CABLES == 4
+            A = structureMatrix4Red(M, L1, L2, Q11, Q21);
+        end
         A(isnan(A)) = 0;
 
         %% 4. Check whether A is full rank i.e., if rank(A) = n
@@ -78,12 +102,15 @@ for x=-2:0.1:2
         %	 Else P (x, y) is not in the workspace. 
         %    Plot the point if it exists in the workspace and iterate.
         if exists
-            plot(point(1), point(2), "r.")
+            plot(point(1), point(2), "g.")
             %disp("exists")
         end
     end
 end
 
-
+%% Plotting the links and cables
+point = [0.5, -1.5];
+[Q11, Q12, Q21, Q22] = findJointAngles(point, L1, L2);  % There are multiple values for Q1 and Q2
+plotPoints(L1, L2, Q11, Q21, M);
 
 

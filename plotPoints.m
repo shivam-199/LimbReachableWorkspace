@@ -15,7 +15,7 @@ L2P1 = L1P2;
 L2P2 = [L1 * cosd(Q1) + L2 * cosd(Q1 + Q2), L1 * sind(Q1) + L2 * sind(Q1 + Q2)];
 
 % Plotting Link 2
-line([L2P1(1), L2P2(1)], [L2P1(2), L2P2(2)], "Color", "red", "LineWidth", 2)
+line([L2P1(1), L2P2(1)], [L2P1(2), L2P2(2)], "Color", "black", "LineWidth", 2)
 
 %% Plotting the Cables
 m = length(M);
