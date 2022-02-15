@@ -23,25 +23,6 @@ Q11_rad = atan2(point(2), point(1)) - atan2(L2 * sind(Q21), L1 + L2 * cosd(Q21))
 Q11 = rad2deg(Q11_rad);
 Q12_rad = atan2(point(2), point(1)) - atan2(L2 * sind(Q22), L1 + L2 * cosd(Q22));
 Q12 = rad2deg(Q12_rad);
-%{
-DD1 = ((point(1) * (L1 + L2 * cosd(Q21)) + point(2) * L2 * sind(Q21)) / ((L1 ^ 2) + (L2 ^ 2) + (2 * L1 * L2 * cosd(Q21))));
-DD2 = ((point(1) * (L1 + L2 * cosd(Q22)) + point(2) * L2 * sind(Q22)) / ((L1 ^ 2) + (L2 ^ 2) + (2 * L1 * L2 * cosd(Q22))));
-
-Q11 = rad2deg(atan2(sqrt(1 - DD1^2), DD1));
-Q12 = rad2deg(atan2(-sqrt(1 - DD2^2), DD2));
-
-Q11_rad = atan2(point(2), point(1)) - atan2(L1 + L2 * cos(Q21), L2 * sin(Q21));
-Q11 = rad2deg(Q11_rad);
-Q12_rad = atan2(point(2), point(1)) - atan2(L1 + L2 * cos(Q22), L2 * sin(Q22));
-Q12 = rad2deg(Q12_rad);
-
-
-Q21 = acosd(((point(1) ^ 2) + (point(2) ^ 2) - (L1 ^ 2) - (L2 ^ 2)) / (2 * L1 * L2));
-Q22 = - Q21;
-
-Q11 = acosd((point(1) * (L1 + L2 * cosd(Q21)) + point(2) * L2 * sind(Q21)) / ((L1^2) + (L2^2) + (2 * L1 * L2 * cosd(Q21))));
-Q12 = acosd((point(1) * (L1 + L2 * cosd(Q22)) + point(2) * L2 * sind(Q22)) / ((L1^2) + (L2^2) + (2 * L1 * L2 * cosd(Q22))));
-%}
 
 end
 
