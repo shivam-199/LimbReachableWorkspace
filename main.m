@@ -25,10 +25,10 @@ CENTER = [0, 0];
 RADIUS = 2;
 NUMBER_OF_CABLES = 4;    % For 2 redundancy using 4 cables or 3 cables for 1 redundancy.
 if NUMBER_OF_CABLES == 3
-    M = [-1.5 0; 0.5, 0; 1.5 0];
+    M = [-1 0; 0.5, 0; 1 0];
 end
 if NUMBER_OF_CABLES == 4
-    M = [-1.5 0; -0.5, 0; 0.5, 0; 1.5 0];
+    M = [-1 0; -0.5, 0; 0.5, 0; 1 0];
 end
 %% Initialising the graph
 % Clear the axes.
@@ -90,6 +90,9 @@ for x=-2:0.01:2
         %% 4. Check whether A is full rank i.e., if rank(A) = n
         %    If rank (A) not equal or < n => P (x, y) is not in the workspace.
         rankOfA = rank(A);
+        if rankOfA ~= 2
+            continue
+        end
 
         %% 5. If rank (A) = n, find eta(A) (null space) [using null space function in MATLAB]
         eta = null(A);

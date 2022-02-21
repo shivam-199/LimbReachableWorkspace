@@ -24,5 +24,6 @@ Q11 = rad2deg(Q11_rad);
 Q12_rad = atan2(point(2), point(1)) - atan2(L2 * sind(Q22), L1 + L2 * cosd(Q22));
 Q12 = rad2deg(Q12_rad);
 
+
 end
 

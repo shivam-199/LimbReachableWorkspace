@@ -12,13 +12,13 @@ r2 = [(L1 * cosd(Q1)) (L1 * sind(Q1))];
 r3 = [(L1 * cosd(Q1) + L2 * cosd(Q1 + Q2)) (L1 * sind(Q1) + L2 * sind(Q1 + Q2))];
 r4 = [(L1 * cosd(Q1) + L2 * cosd(Q1 + Q2)) (L1 * sind(Q1) + L2 * sind(Q1 + Q2))];
 %% Calculating cables direction unit vector
-x1 = M(1, :) - r1;
+x1 = M(3, :) - r1;
 l1_cap = (x1) / (sqrt(x1(1) ^ 2 + x1(2) ^ 2));
 
 x2 = M(2, :) - r2;
 l2_cap = (x2) / (sqrt(x2(1) ^ 2 + x2(2) ^ 2));
 
-x3 = M(3, :) - r3;
+x3 = M(1, :) - r3;
 l3_cap = (x3) / (sqrt(x3(1) ^ 2 + x3(2) ^ 2));
 
 x4 = M(4, :) - r4;
